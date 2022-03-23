@@ -65,9 +65,8 @@ for file in pages_files:
                         words = get_words(sentence)
                         for word in words:
                             current_lemma = morph.normal_forms(word)[0]
-                            if current_lemma not in tokens:
-                                tokens.append(current_lemma)
-                                print(word)
+                            tokens.append(word)
+                            print(word)
                             if current_lemma not in lemmas:
                                 lemmas[current_lemma] = set()
                             lemmas[current_lemma].add(word)
