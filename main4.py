@@ -105,10 +105,10 @@ if __name__ == '__main__':
         values = values[1]
         with open(join(tokens_result_dir, f'tokens_tf_idf_{key}.txt'), 'w') as writable:
             for value in values:
-                writable.write(f'{value[0]} {value[2]} {value[4]}\n')
+                writable.write(f'{value[0]} {value[3]} {value[4]}\n')
     for key, values in lemmas_tf_idf.items():
         with open(join(lemmas_result_dir, f'lemmas_tf_idf_{key}.txt'), 'w') as writable:
             for value in values:
-                writable.write(f'{value[0]} {value[2]} {value[4]}\n')
+                writable.write(f'{value[0]} {value[3]} {value[4]}\n')
 
 
