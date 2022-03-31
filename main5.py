@@ -226,7 +226,7 @@ class Searcher(PyQt5.QtCore.QObject):
         engine.rootContext().setContextProperty('linksModel', [])
 
         for link in make_links(vector_search(arg1)):
-            links.addLink(LinkListItem(link))
+            links.addLink(LinkListItem("<a href='" + link + "'>" + link + '</a>'))
             print(link)
 
         engine.rootContext().setContextProperty('linksModel', links)
@@ -270,5 +270,4 @@ if __name__ == '__main__':
     engine.rootContext().setContextProperty("searcher", searcher)
     engine.load('hm5/ui/main.qml')
 
-    engine.rootContext().setContextProperty('linksModel', links)
     sys.exit(app.exec())

@@ -64,7 +64,7 @@ ApplicationWindow {
                 Column {
                     Text {
                         text: display.path
-                        focus: true
+                        onLinkActivated: Qt.openUrlExternally(link)
                      }
                 }
             }
