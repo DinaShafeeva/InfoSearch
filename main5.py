@@ -1,5 +1,6 @@
 import os
 import sys
+from os.path import join
 
 import PyQt5.QtCore
 from PyQt5.QtGui import QGuiApplication
@@ -23,24 +24,22 @@ def get_lemma(search_query):
 def get_html_lemmas_tf_idf():
     lemmas_html = dict()
     files = []
-    path = 'lemmas_tf_idf'
+    path = 'lemmas_tf_idf/'
     for it in os.listdir(path):
         files.append(it)
 
-    for file1 in files:
-        with open(file1, 'r', encoding="utf-8") as file:
+    for tf_idf_file in files:
+        with open(join(path, tf_idf_file), 'r', encoding='utf-8') as file:
             lines = file.readlines()
-
+        lines = [line for line in lines if not line == '']
+        curr = lemmas_html.setdefault(tf_idf_file.split('.')[0].split('_')[-1], dict())
         for line in lines:
-            if line == "":
-                continue
-
             line_items = line.split(" ")
             lemma = line_items[0]
             lemma_idf = float(line_items[1])
             lemma_tf_idf = float(line_items[2])
 
-            lemmas_html.setdefault(lemma, (lemma_idf, lemma_tf_idf))
+            curr.setdefault(lemma, (lemma_idf, lemma_tf_idf))
 
     return lemmas_html
 
@@ -202,13 +201,34 @@ def cosine_similarity(a: list, b: list):
     return numerator / (a_den * b_den)
 
 
+def make_links(vectors):
+    path = "output/index.txt"
+    links = []
+    with open(path, 'r', encoding='utf-8') as index_txt:
+        text = index_txt.read().split('\n')
+
+    for vector in vectors:
+        curr_vector = vector[0]
+        for line in text:
+            curr_line = line.split(' - ')
+            if curr_line[0] == curr_vector:
+                links.append(curr_line[1])
+
+    return links
+
+
 class Searcher(PyQt5.QtCore.QObject):
     def __init__(self):
         PyQt5.QtCore.QObject.__init__(self)
 
     @PyQt5.QtCore.pyqtSlot(str)
     def search(self, arg1):
-        links.addLink(LinkListItem(arg1))
+        engine.rootContext().setContextProperty('linksModel', [])
+
+        for link in make_links(vector_search(arg1)):
+            links.addLink(LinkListItem(link))
+            print(link)
+
         engine.rootContext().setContextProperty('linksModel', links)
 
 
@@ -242,19 +262,13 @@ class LinkList(PyQt5.QtCore.QAbstractListModel):
 
 links = LinkList([])
 if __name__ == '__main__':
-    print(vector_search("суп"))
-
     app = QGuiApplication(sys.argv)
-
-    links.addLink(LinkListItem('AbcЫ'))
-    links.addLink(LinkListItem('Def'))
-    links.addLink(LinkListItem('Ghi'))
 
     searcher = Searcher()
     engine = QQmlApplicationEngine()
     engine.quit.connect(app.quit)
     engine.rootContext().setContextProperty("searcher", searcher)
-    engine.load('./ui/main.qml')
+    engine.load('hm5/ui/main.qml')
 
     engine.rootContext().setContextProperty('linksModel', links)
     sys.exit(app.exec())
