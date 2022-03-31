@@ -22,9 +22,13 @@ def get_lemma(search_query):
 
 def get_html_lemmas_tf_idf():
     lemmas_html = dict()
+    files = []
     path = 'lemmas_tf_idf'
     for it in os.listdir(path):
-        with open(it, 'r', encoding="utf-8") as file:
+        files.append(it)
+
+    for file1 in files:
+        with open(file1, 'r', encoding="utf-8") as file:
             lines = file.readlines()
 
         for line in lines:
